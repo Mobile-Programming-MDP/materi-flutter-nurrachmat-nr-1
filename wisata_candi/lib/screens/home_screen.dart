@@ -27,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
           //@TODO 3 : Buat ItemCard
           Candi candi = candiList[index];
           //Buat Widget ItemCard di folder widgets
+
           return ItemCard(candi: candi);
         },
       ),

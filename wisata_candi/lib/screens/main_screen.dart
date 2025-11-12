@@ -15,10 +15,10 @@ class _MainScreenState extends State<MainScreen> {
   //@TODO 1 : Deklarasi Variable / state
   int _currentIndex = 0;
   final List<Widget> _children = [
-    HomeScreen(),
-    SearchScreen(),
-    FavoriteScreen(),
-    ProfileScreen(),
+    HomeScreen(), //0
+    SearchScreen(), //1
+    FavoriteScreen(), //2
+    ProfileScreen(),  //3
   ];
 
   @override

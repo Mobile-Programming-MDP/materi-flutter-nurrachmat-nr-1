@@ -20,6 +20,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   // TODO: 2. Membuat fungsi dispose
 
+   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,6 +32,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Form(
+              key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -40,7 +42,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     decoration: const InputDecoration(
                       labelText: 'Nama',
                       border: OutlineInputBorder(),
+                      hintText: "Masukkan nama lengkap anda",
                     ),
+                    validator: (value) {
+                      if(value == null || value.isEmpty){
+                        return 'Nama tidak boleh kosong';
+                      }
+                      return null;
+                    },
+                    
                   ),
                   const SizedBox(
                     height: 20,
@@ -50,6 +60,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     decoration: const InputDecoration(
                       labelText: 'Nama Pengguna',
                       border: OutlineInputBorder(),
+                      hintText: "Masukkan username anda tanpa spasi"
                     ),
                   ),
                   const SizedBox(
@@ -80,7 +91,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     height: 20,
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Processing Data')),
+                          );
+                        }
+                    },
                     child: const Text('Sign Up'),
                   ),
                 ],
