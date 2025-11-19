@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -11,16 +12,46 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
   String _errorText = '';
-
   bool _obscurePassword = true;
 
   // TODO: 1. Membuat fungsi _signUp
+  void _signUp() async {
+    //inisiasi shared preferences
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String name = _nameController.text.trim();
+    String username = _usernameController.text.trim();
+    String password = _passwordController.text.trim();
+
+    if (password.length < 8 ||
+        !password.contains(RegExp(r'[A-Z]')) ||
+        !password.contains(RegExp(r'[a-z]')) ||
+        !password.contains(RegExp(r'[0-9]')) ||
+        !password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+      setState(() {
+        _errorText =
+            'Minimal 8 karakter, kombinasi [A-Z], [a-z], [0-9], [!@#\\\$%^&*(),.?":{}|<>]';
+      });
+      return;
+    } else {
+      setState(() {
+        _errorText = '';
+      });
+      prefs.setString('fullname', name);
+      prefs.setString('username', username);
+      prefs.setString('password', password);
+      Navigator.pushReplacementNamed(context, "/signinscreen");
+    }
+  }
 
   // TODO: 2. Membuat fungsi dispose
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
 
-   final _formKey = GlobalKey<FormState>();
+  //final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +63,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Form(
-              key: _formKey,
+              //key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -44,12 +75,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       border: OutlineInputBorder(),
                       hintText: "Masukkan nama lengkap anda",
                     ),
-                    validator: (value) {
-                      if(value == null || value.isEmpty){
-                        return 'Nama tidak boleh kosong';
-                      }
-                      return null;
-                    },
+                    // validator: (value) {
+                    //   if(value == null || value.isEmpty){
+                    //     return 'Nama tidak boleh kosong';
+                    //   }
+                    //   return null;
+                    // },
                     
                   ),
                   const SizedBox(
@@ -92,11 +123,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Processing Data')),
-                          );
-                        }
+                        // if (_formKey.currentState!.validate()) {
+                        //   ScaffoldMessenger.of(context).showSnackBar(
+                        //     const SnackBar(content: Text('Processing Data')),
+                        //   );
+                        // }
+                        _signUp();
                     },
                     child: const Text('Sign Up'),
                   ),

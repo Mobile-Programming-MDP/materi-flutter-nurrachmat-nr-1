@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wisata_candi/screens/sign_up_screen.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -14,11 +15,32 @@ class _SignInScreenState extends State<SignInScreen> {
   final TextEditingController _passwordController = TextEditingController();
 
   String _errorText = '';
+  bool _isSignedIn = false;
   bool _obscurePassword = true;
 
-  void _signIn() {
+  void _signIn() async {
+    final SharedPreferences prefs =await SharedPreferences.getInstance();
+
+    String savedUsername = prefs.getString("username") ?? "";
+    String savedPassword = prefs.getString("password") ?? "";
     String username = _usernameController.text.trim();
     String password = _passwordController.text.trim();
+
+    if(username.isEmpty || password.isEmpty){
+      setState(() {
+        _errorText =
+            'Username dan Password harus diisi';
+      });
+      return;
+    }
+
+    if(savedUsername.isEmpty || savedPassword.isEmpty){
+      setState(() {
+        _errorText =
+            'Pengguna belum terdaftar. Silakan daftar terlebih dahulu';
+      });
+      return;
+    }
 
     if (password.length < 8 ||
         !password.contains(RegExp(r'[A-Z]')) ||
@@ -30,11 +52,30 @@ class _SignInScreenState extends State<SignInScreen> {
             'Minimal 8 karakter, kombinasi [A-Z], [a-z], [0-9], [!@#\\\$%^&*(),.?":{}|<>]';
       });
       return;
-    } else {
-      setState(() {
-        _errorText = '';
-      });
+    }else{
+      if(password == savedPassword && username == savedUsername){
+        setState(() {
+          _errorText = "";
+          _isSignedIn = true;
+          prefs.setBool("isSignedIn", true);
+        });
+
+        WidgetsBinding.instance.addPostFrameCallback((_){
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        });
+
+        WidgetsBinding.instance.addPostFrameCallback((_){
+          Navigator.pushReplacementNamed(context, "/");
+        });
+      }else{
+        setState(() {
+          _errorText =
+              'Username atau password salah';
+        });
+        return;
+      }
     }
+    
 
     print('*** Sign in berhasil!');
     print('Nama Pengguna: $username');
@@ -108,12 +149,13 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const SignUpScreen(),
-                                ),
-                              );
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder: (context) => const SignUpScreen(),
+                              //   ),
+                              // );
+                              Navigator.pushNamed(context, "/signupscreen");
                             },
                         ),
                       ],

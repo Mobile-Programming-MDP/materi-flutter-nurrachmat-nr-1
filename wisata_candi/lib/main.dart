@@ -4,6 +4,7 @@ import 'package:wisata_candi/screens/detail_screen.dart';
 import 'package:wisata_candi/screens/home_screen.dart';
 import 'package:wisata_candi/screens/main_screen.dart';
 import 'package:wisata_candi/screens/search_screen.dart';
+import 'package:wisata_candi/screens/sign_in_screen.dart';
 import 'package:wisata_candi/screens/sign_up_screen.dart';
 
 void main() {
@@ -21,10 +22,12 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      //home: DetailScreen(candi: candiList[5]),
-      //home: SearchScreen()
-      //home: HomeScreen(),
-      home: const SignUpScreen(),
+      routes: {
+        '/homescreen' :  (context) => HomeScreen(),
+        '/signinscreen' :  (context) => SignInScreen(),
+        '/signupscreen' :  (context) => SignUpScreen(),
+      },
+      home: MainScreen(),
     );
   }
 }
