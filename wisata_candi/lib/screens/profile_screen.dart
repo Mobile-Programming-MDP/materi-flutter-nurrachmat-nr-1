@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -16,17 +17,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   //5. implementasi fungsi signIn
   void signIn() {
-    // setState(() {
-    //   isSignedIn = !isSignedIn;
-    // });
     Navigator.pushNamed(context, "/signinscreen");
   }
 
   //6. implementasi fungsi signOut
-  void signOut() {
+  void signOut() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isSignedIn', false);
+    //await prefs.remove('username');
+    //await prefs.remove('name');
+
     setState(() {
       isSignedIn = !isSignedIn;
+      userName = '';
+      fullName = '';
     });
+  }
+
+  void _checkSignInStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isSignedIn = prefs.getBool("isSignedIn") ?? false;
+    });
+  }
+
+  void _identitas() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      fullName = prefs.getString("fullname") ?? "";
+      userName = prefs.getString("username") ?? "";
+    });
+  }
+
+  @override
+  void initState() {
+    _checkSignInStatus();
+    if (isSignedIn) {
+      _identitas();
+    }
+    super.initState();
   }
 
   @override
@@ -60,8 +89,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           child: CircleAvatar(
                             radius: 50,
-                            backgroundImage:
-                                AssetImage('images/placeholder_image.png'),
+                            backgroundImage: AssetImage(
+                              'images/placeholder_image.png',
+                            ),
                           ),
                         ),
                         if (isSignedIn)
@@ -93,7 +123,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -122,7 +152,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -151,7 +181,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),
