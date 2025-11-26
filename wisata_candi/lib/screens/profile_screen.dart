@@ -38,6 +38,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       isSignedIn = prefs.getBool("isSignedIn") ?? false;
+      if(isSignedIn){
+        _identitas();
+      }
     });
   }
 
@@ -52,9 +55,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     _checkSignInStatus();
-    if (isSignedIn) {
-      _identitas();
-    }
     super.initState();
   }
 

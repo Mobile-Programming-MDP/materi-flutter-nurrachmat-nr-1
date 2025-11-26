@@ -20,6 +20,8 @@ class FavoriteScreenState extends State<FavoriteScreen> {
     setState(() {
       //Gunakan where untuk memfilter candi yang ditandai favorit
       _favoriteCandi = candiList.where((candi) {
+        var status = prefs.getBool('favorite_${candi.name}') ?? false;
+        print('Apakah '+candi.name +' ada di fav ? '+ status.toString());
         return prefs.getBool('favorite_${candi.name}') ?? false;
       }).toList();
     });
